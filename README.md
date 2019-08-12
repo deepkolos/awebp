@@ -19,3 +19,7 @@ Examples:
 
 1. ffmpeg 转换出来的 webp 重叠问题, 需要设置 dispose-method 为 BACKGROUND
 2. animated webp 压缩
+
+# TODO
+
+1. 兼容其他操作系统
