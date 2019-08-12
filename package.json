@@ -1,0 +1,37 @@
+{
+  "name": "awebp",
+  "version": "1.0.0",
+  "description": "awebp 修改 animated webp 的工具比如修复ffmpeg转出webp层叠展示问题和压缩",
+  "main": "out/main.js",
+  "bin": {
+    "awebp": "./lib/main.js"
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "release": "tsc && minify lib -d lib --mergeVars --undefinedToVoid --infinity --mangle --simplify --memberExpressions --typeConstructors",
+    "test": "jest",
+    "help": "node lib/main --help",
+    "quality": "node lib/main -q 60 ./test/test.webp",
+    "dispose-method": "node lib/main --dispose-method 1 ./test/test.webp"
+  },
+  "keywords": [
+    "webp",
+    "animated",
+    "animated webp tool"
+  ],
+  "author": "DeepKolos <deepkolos@qq.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.6.6",
+    "@types/rimraf": "^2.0.2",
+    "babel-minify": "^0.5.0",
+    "jest": "^24.8.0",
+    "jest-mock-console": "^1.0.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "rimraf": "^2.6.3"
+  }
+}

@@ -1,0 +1,6 @@
+Features present: animation transparency
+Background color : 0xFFFFFFFF  Loop Count : 1
+Number of frames: 293
+No.: width height alpha x_offset y_offset duration   dispose blend image_size  compression
+  1:   540   960   yes        0        0       34       none   yes      46248       lossy
+  2:   540   960   yes        0        0       35       none   yes      46248       lossy
