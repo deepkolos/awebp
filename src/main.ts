@@ -88,7 +88,7 @@ cli
           }),
         );
 
-        return webp.createCommand({}, frameDir, outFile);
+        return webp.createCommand({ dispose: true }, frameDir, outFile);
       });
     },
   )
