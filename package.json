@@ -11,6 +11,7 @@
     "release": "tsc && minify lib -d lib --mergeVars --undefinedToVoid --infinity --mangle --simplify --memberExpressions --typeConstructors",
     "test": "jest",
     "help": "node lib/main --help",
+    "extract": "node lib/main -e ./test/test.webp",
     "quality": "node lib/main -q 60 ./test/test.webp",
     "dispose-method": "node lib/main --dispose-method 1 ./test/test.webp"
   },

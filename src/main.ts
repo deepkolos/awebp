@@ -93,6 +93,18 @@ cli
     },
   )
 
+  .action<{ file: string; outDir: string }>(
+    '-e --extract-frame [file] [outDir]',
+    '提取帧出来',
+    '',
+    async ({ file, outDir = 'frames' }) => {
+      const webp = new Webp(file);
+      await webp.init();
+      await webp.extractFramesData(outDir);
+      success();
+    },
+  )
+
   .action(
     'awebp -d 0 ./test/test.webp',
     '// 设置webp每帧的dispose method为0',
@@ -101,6 +113,11 @@ cli
   .action(
     'awebp -q 75 ./test/test.webp',
     '// 设置动图webp压缩率, 提取帧->转png->重新拼接webp',
+    'Examples',
+  )
+  .action(
+    'awebp -e ./test/test.webp frames',
+    '// 提取所有帧出来到frames文件夹',
     'Examples',
   )
 
