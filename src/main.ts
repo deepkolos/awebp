@@ -95,13 +95,28 @@ cli
 
   .action<{ file: string; outDir: string }>(
     '-e --extract-frame [file] [outDir]',
-    '提取帧出来',
+    '提取所有帧出来',
     '',
     async ({ file, outDir = 'frames' }) => {
       const webp = new Webp(file);
       await webp.init();
       await webp.extractFramesData(outDir);
       success();
+    },
+  )
+
+  .action<{ file: string }>(
+    '-i --info [file]',
+    '统计duration',
+    '',
+    async ({ file }) => {
+      const webp = new Webp(file);
+      await webp.init();
+      const duration = webp.frames.reduce(
+        (acc, frame) => acc + ~~frame.duration,
+        0,
+      );
+      console.log(`duration: ${duration}ms`);
     },
   )
 
@@ -118,6 +133,11 @@ cli
   .action(
     'awebp -e ./test/test.webp frames',
     '// 提取所有帧出来到frames文件夹',
+    'Examples',
+  )
+  .action(
+    'awebp -i ./test/test.webp frames',
+    '// 统计出animated webp duration',
     'Examples',
   )
 
