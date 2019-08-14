@@ -136,7 +136,7 @@ cli
     'Examples',
   )
   .action(
-    'awebp -i ./test/test.webp frames',
+    'awebp -i ./test/test.webp',
     '// 统计出animated webp duration',
     'Examples',
   )

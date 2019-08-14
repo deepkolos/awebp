@@ -16,7 +16,7 @@ Examples:
   awebp -d 0 ./test/test.webp            // 设置webp每帧的dispose method为0
   awebp -q 75 ./test/test.webp           // 设置动图webp压缩率, 提取帧->转png->重新拼接webp
   awebp -e ./test/test.webp frames       // 提取所有帧出来到frames文件夹
-  awebp -i ./test/test.webp frames       // 统计出animated webp duration
+  awebp -i ./test/test.webp              // 统计出animated webp duration
 ```
 
 # 使用场景
