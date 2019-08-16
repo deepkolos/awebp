@@ -27,18 +27,20 @@ export function exec(cmd: string, ignoreError?: boolean): Promise<string> {
 export function concurrent(jobs: Array<() => any>, threadNum: number = 10) {
   return new Promise((resolve, reject) => {
     jobs = [...jobs];
+    let doing = 0;
 
     const doJob = async () => {
       const job = jobs.shift();
-
+      doing++;
       try {
         job && (await job());
+        doing--;
       } catch (error) {
         reject('job error');
       }
 
       if (jobs.length) doJob();
-      else resolve();
+      else if (doing === 0) resolve();
     };
 
     for (let i = 0, len = Math.min(threadNum, jobs.length); i < len; i++)

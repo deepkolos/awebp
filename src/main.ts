@@ -28,6 +28,8 @@ async function updateFrame(
       success();
       console.log(`output: ${outFile}`);
     }
+
+    rimraf.sync(frameDir);
   }
 }
 
