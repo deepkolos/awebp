@@ -67,7 +67,7 @@ cli
           }),
         );
 
-        return webp.createCommand({ dispose: true }, frameDir, outFile);
+        return webp.createCommand({}, frameDir, outFile);
       });
     },
   )
@@ -136,13 +136,25 @@ cli
     },
   )
 
+  .action<{ fps: string; file: string; outFile: string }>(
+    '-f --fps [fps] [file] [outFile]',
+    '修改duration, fps更好描述',
+    '',
+    async ({ fps, file, outFile = 'output.webp' }) => {
+      const duration = Math.round(1000 / parseFloat(fps));
+      await updateFrame(file, outFile, (webp, frameDir) => {
+        return webp.createCommand({ duration }, frameDir, outFile);
+      });
+    },
+  )
+
   .action(
     'awebp -d 0 ./test/test.webp',
     '// 设置webp每帧的dispose method为0',
     'Examples',
   )
   .action(
-    'awebp -q 75 ./test/test.webp',
+    'awebp -q 60 ./test/test.webp',
     '// 设置动图webp压缩率, 提取帧->转png->重新拼接webp',
     'Examples',
   )
@@ -153,12 +165,17 @@ cli
   )
   .action(
     'awebp -c frames out.webp +34+0+0+1+b 1 255,255,255,255',
-    '// 合成',
+    '// 从frames文件夹合成webp',
     'Examples',
   )
   .action(
     'awebp -i ./test/test.webp',
     '// 统计出animated webp duration',
+    'Examples',
+  )
+  .action(
+    'awebp -f 60 ./test/test.webp',
+    '// 修改 animated webp duration (60fps ~= 17)',
     'Examples',
   )
 

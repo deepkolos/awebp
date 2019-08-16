@@ -12,10 +12,11 @@
     "test": "jest",
     "help": "node lib/main --help",
     "info": "node lib/main -i ./test/test.webp",
+    "fps": "node lib/main -f 60 ./test/test.webp",
     "extract": "node lib/main -e ./test/test.webp",
     "compose": "node lib/main -c frames",
     "quality": "node lib/main -q 60 ./test/test.webp",
-    "dispose-method": "node lib/main --dispose-method 1 ./test/test.webp"
+    "dispose-method": "node lib/main -d 1 ./test/test.webp"
   },
   "keywords": [
     "webp",

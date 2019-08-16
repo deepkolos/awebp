@@ -12,13 +12,15 @@ animated webp 小工具, 对 libwebp 的简单封装, 提供对 animated webp �
   -e --extract-frame [file] [outDir]                             提取所有帧出来
   -c --compose [frameDir] [outFile] [frameOpt] [loop] [bgColor]          从多个图片合成animated webp, frameOpt与webpmux一致
   -i --info [file]                                               统计duration
+  -f --fps [fps] [file] [outFile]                                修改duration, fps更好描述
 
 Examples:
   awebp -d 0 ./test/test.webp                                    // 设置webp每帧的dispose method为0
-  awebp -q 75 ./test/test.webp                                   // 设置动图webp压缩率, 提取帧->转png->重新拼接webp
+  awebp -q 60 ./test/test.webp                                   // 设置动图webp压缩率, 提取帧->转png->重新拼接webp
   awebp -e ./test/test.webp frames                               // 提取所有帧出来到frames文件夹
-  awebp -c frames out.webp +34+0+0+1+b 1 255,255,255,255         // 合成
+  awebp -c frames out.webp +34+0+0+1+b 1 255,255,255,255         // 从frames文件夹合成webp
   awebp -i ./test/test.webp                                      // 统计出animated webp duration
+  awebp -f 60 ./test/test.webp                                   // 修改 animated webp duration (60fps ~= 17)
 ```
 
 # 使用场景
@@ -28,5 +30,5 @@ Examples:
 
 # TODO
 
-1. 兼容其他操作系统
+1. 兼容其他操作系统 √
 2. 完善 info 命令

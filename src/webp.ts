@@ -88,7 +88,7 @@ export class Webp {
     await concurrent(
       frames.map((frame, i) => () =>
         exec(
-          `webpmux -get frame ${i} ${filePath} -o ${dir}/frame-${i}.webp`,
+          `webpmux -get frame ${i + 1} ${filePath} -o ${dir}/frame-${i}.webp`,
           true,
         ),
       ),
@@ -101,15 +101,17 @@ export class Webp {
     options: {
       blend?: Boolean;
       dispose?: Boolean;
+      duration?: number;
     },
     frameDir: string,
     outFile: string = 'output.webp',
   ) {
-    const { dispose, blend } = options;
+    const { dispose, blend, duration } = options;
     const { frames, loopCount, backgroundColorARGB } = this;
 
     let blendOpt: string;
     let disposeOpt: string;
+    let durationOpt: number;
     let command = `webpmux `;
 
     frames.forEach((frame, i) => {
@@ -119,9 +121,11 @@ export class Webp {
       : frame.dispose)
         ? '1'
         : '0';
+      durationOpt =
+        duration === undefined ? parseInt(frame.duration, 10) : duration;
 
       // 这里导致复用性降低, 有耦合
-      command += `-frame ${frameDir}/frame-${i}.webp +${frame.duration}+${
+      command += `-frame ${frameDir}/frame-${i}.webp +${durationOpt}+${
         frame.xOffset
       }+${frame.yOffset}+${disposeOpt}${blendOpt} `;
     });
