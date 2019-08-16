@@ -13,6 +13,8 @@ animated webp 小工具, 对 libwebp 的简单封装, 提供对 animated webp �
   -c --compose [frameDir] [outFile] [frameOpt] [loop] [bgColor]          从多个图片合成animated webp, frameOpt与webpmux一致
   -i --info [file]                                               统计duration
   -f --fps [fps] [file] [outFile]                                修改duration, fps更好描述
+  -l --loop [loop] [file] [outFile]                              修改loop, 0为无限循环
+  -b --bg-color [bgColor] [file] [outFile]                       修改loop, 0为无限循环
 
 Examples:
   awebp -d 0 ./test/test.webp                                    // 设置webp每帧的dispose method为0
@@ -21,6 +23,8 @@ Examples:
   awebp -c frames out.webp +34+0+0+1+b 1 255,255,255,255         // 从frames文件夹合成webp
   awebp -i ./test/test.webp                                      // 统计出animated webp duration
   awebp -f 60 ./test/test.webp                                   // 修改 animated webp duration (60fps ~= 17)
+  awebp -l 3 ./test/test.webp                                    // 修改webp的循环次数为 3 次
+  awebp -b 0,0,0,0 ./test/test.webp                              // 修改webp背景颜色
 ```
 
 # 使用场景
@@ -33,3 +37,4 @@ Examples:
 1. 兼容其他操作系统
 2. 完善 info 命令
 3. 命令耗时统计
+4. 背景颜色输入兼容更多格式

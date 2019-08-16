@@ -2,9 +2,9 @@
 
 import CLI from './cli';
 import { Webp } from './webp';
+import { readdirSync } from 'fs';
 import rimraf = require('rimraf');
-import { exec, isWindows, concurrent, readDir, execLongCMD } from './utils';
-import { writeFileSync, unlinkSync, readdirSync, existsSync } from 'fs';
+import { exec, concurrent, readDir, execLongCMD } from './utils';
 
 const cli = new CLI();
 
@@ -107,7 +107,7 @@ cli
 
       let command = `webpmux `;
 
-      frames.forEach((frameFile, i) => {
+      frames.forEach(frameFile => {
         command += `-frame ${frameDir}/${frameFile} ${frameOpt} `;
       });
 
@@ -148,6 +148,31 @@ cli
     },
   )
 
+  .action<{ loop: string; file: string; outFile: string }>(
+    '-l --loop [loop] [file] [outFile]',
+    '修改loop, 0为无限循环',
+    '',
+    async ({ loop, file, outFile = 'output.webp' }) => {
+      await updateFrame(file, outFile, (webp, frameDir) => {
+        return webp.createCommand(
+          { loop: parseInt(loop, 10) },
+          frameDir,
+          outFile,
+        );
+      });
+    },
+  )
+  .action<{ bgColor: string; file: string; outFile: string }>(
+    '-b --bg-color [bgColor] [file] [outFile]',
+    '修改loop, 0为无限循环',
+    '',
+    async ({ bgColor, file, outFile = 'output.webp' }) => {
+      await updateFrame(file, outFile, (webp, frameDir) => {
+        return webp.createCommand({ bgColor }, frameDir, outFile);
+      });
+    },
+  )
+
   .action(
     'awebp -d 0 ./test/test.webp',
     '// 设置webp每帧的dispose method为0',
@@ -176,6 +201,16 @@ cli
   .action(
     'awebp -f 60 ./test/test.webp',
     '// 修改 animated webp duration (60fps ~= 17)',
+    'Examples',
+  )
+  .action(
+    'awebp -l 3 ./test/test.webp',
+    '// 修改webp的循环次数为 3 次',
+    'Examples',
+  )
+  .action(
+    'awebp -b 0,0,0,0 ./test/test.webp',
+    '// 修改webp背景颜色',
     'Examples',
   )
 

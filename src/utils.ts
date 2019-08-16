@@ -83,3 +83,8 @@ export async function execLongCMD(cmd: string) {
     }
   }
 }
+
+export function defVal<T>(value: T | null | undefined, defValue: T): T {
+  if (value === null || value === undefined) return defValue;
+  return value;
+}

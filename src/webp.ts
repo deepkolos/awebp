@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { exec, concurrent } from './utils';
+import { exec, concurrent, defVal } from './utils';
 
 interface Frame {
   no: number;
@@ -99,20 +99,24 @@ export class Webp {
 
   createCommand(
     options: {
+      loop?: number;
       blend?: Boolean;
+      bgColor?: string;
       dispose?: Boolean;
       duration?: number;
     },
     frameDir: string,
     outFile: string = 'output.webp',
   ) {
-    const { dispose, blend, duration } = options;
+    const { dispose, blend, duration, loop, bgColor } = options;
     const { frames, loopCount, backgroundColorARGB } = this;
 
     let blendOpt: string;
     let disposeOpt: string;
     let durationOpt: number;
     let command = `webpmux `;
+    const loopOpt = defVal(loop, loopCount);
+    const bgColorOpt = defVal(bgColor, backgroundColorARGB.join(','));
 
     frames.forEach((frame, i) => {
       blendOpt = (blend !== undefined ? blend : frame.blend) ? '+b' : '-b';
@@ -130,7 +134,7 @@ export class Webp {
       }+${frame.yOffset}+${disposeOpt}${blendOpt} `;
     });
 
-    command += `-loop ${loopCount} -bgcolor ${backgroundColorARGB.join(',')} `;
+    command += `-loop ${loopOpt} -bgcolor ${bgColorOpt} `;
     command += `-o ${outFile}`;
 
     return command;
