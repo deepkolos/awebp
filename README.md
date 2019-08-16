@@ -1,6 +1,6 @@
 # AWebp
 
-animated webp 小工具, 对 libwebp 的简单封装, 提供对 animated webp 相关的常用批处理功能
+animated webp 小工具, 对 libwebp 的简单封装, 提供对 animated webp 相关的常用批处理功能(笨方法)
 
 ```shell
 > npm i -g awebp
