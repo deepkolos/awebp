@@ -164,7 +164,7 @@ cli
   )
   .action<{ bgColor: string; file: string; outFile: string }>(
     '-b --bg-color [bgColor] [file] [outFile]',
-    '修改loop, 0为无限循环',
+    '修改webp背景颜色, A,R,G,B',
     '',
     async ({ bgColor, file, outFile = 'output.webp' }) => {
       await updateFrame(file, outFile, (webp, frameDir) => {

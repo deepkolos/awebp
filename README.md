@@ -14,7 +14,7 @@ animated webp 小工具, 对 libwebp 的简单封装, 提供对 animated webp �
   -i --info [file]                                               统计duration
   -f --fps [fps] [file] [outFile]                                修改duration, fps更好描述
   -l --loop [loop] [file] [outFile]                              修改loop, 0为无限循环
-  -b --bg-color [bgColor] [file] [outFile]                       修改loop, 0为无限循环
+  -b --bg-color [bgColor] [file] [outFile]                       修改webp背景颜色, A,R,G,B
 
 Examples:
   awebp -d 0 ./test/test.webp                                    // 设置webp每帧的dispose method为0
