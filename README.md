@@ -1,22 +1,24 @@
 # AWebp
 
-animated webp 小工具(笨方法)
+animated webp 小工具, 对 libwebp 的简单封装, 提供对 animated webp 相关的常用批处理功能
 
 ```shell
 > npm i -g awebp
 > awebp -h
 
-  -h --help                                      显示帮助
-  -d --dispose [method] [file] [outFile]         dispose-method: 0 for NONE or 1 for BACKGROUND
-  -q --quality [quality] [file] [outFile]        Specify the compression between 0 and 100
-  -e --extract-frame [file] [outDir]             提取所有帧出来
-  -i --info [file]                               统计duration
+  -h --help                                                      显示帮助
+  -d --dispose [method] [file] [outFile]                         dispose-method: 0 for NONE or 1 for BACKGROUND
+  -q --quality [quality] [file] [outFile]                        Specify the compression between 0 and 100
+  -e --extract-frame [file] [outDir]                             提取所有帧出来
+  -c --compose [frameDir] [outFile] [frameOpt] [loop] [bgColor]          从多个图片合成animated webp, frameOpt与webpmux一致
+  -i --info [file]                                               统计duration
 
 Examples:
-  awebp -d 0 ./test/test.webp            // 设置webp每帧的dispose method为0
-  awebp -q 75 ./test/test.webp           // 设置动图webp压缩率, 提取帧->转png->重新拼接webp
-  awebp -e ./test/test.webp frames       // 提取所有帧出来到frames文件夹
-  awebp -i ./test/test.webp              // 统计出animated webp duration
+  awebp -d 0 ./test/test.webp                                    // 设置webp每帧的dispose method为0
+  awebp -q 75 ./test/test.webp                                   // 设置动图webp压缩率, 提取帧->转png->重新拼接webp
+  awebp -e ./test/test.webp frames                               // 提取所有帧出来到frames文件夹
+  awebp -c frames out.webp +34+0+0+1+b 1 255,255,255,255         // 合成
+  awebp -i ./test/test.webp                                      // 统计出animated webp duration
 ```
 
 # 使用场景

@@ -3,8 +3,8 @@
 import CLI from './cli';
 import { Webp } from './webp';
 import rimraf = require('rimraf');
-import { exec, isWindows, concurrent } from './utils';
-import { writeFileSync, unlinkSync, readdirSync } from 'fs';
+import { exec, isWindows, concurrent, readDir, execLongCMD } from './utils';
+import { writeFileSync, unlinkSync, readdirSync, existsSync } from 'fs';
 
 const cli = new CLI();
 
@@ -24,33 +24,10 @@ async function updateFrame(
     const frameDir = await webp.extractFramesData();
     const composeCommand = await getComposeCommand(webp, frameDir);
 
-    if (isWindows) {
-      // windows cmd 有命令最长有8k char 限制, 所以使用powershell来执行命令
-      const ps1 = 'composeWEBP.ps1';
-      console.log('success extract frames');
-      writeFileSync(ps1, composeCommand);
-      console.log('TCL: composeCommand', composeCommand);
-
-      try {
-        await exec(`powershell -f ${ps1}`);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        unlinkSync(ps1);
-        rimraf.sync(frameDir);
-      }
-    } else {
-      try {
-        await exec(composeCommand);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        rimraf.sync(frameDir);
-      }
+    if (await execLongCMD(composeCommand)) {
+      success();
+      console.log(`output: ${outFile}`);
     }
-
-    success();
-    console.log(`output: ${outFile}`);
   }
 }
 
@@ -105,6 +82,43 @@ cli
     },
   )
 
+  .action<{
+    loop: string;
+    outFile: string;
+    frameDir: string;
+    frameOpt: string;
+    bgColor: string;
+  }>(
+    '-c --compose [frameDir] [outFile] [frameOpt] [loop] [bgColor]',
+    '从多个图片合成animated webp, frameOpt与webpmux一致',
+    '',
+    async ({
+      frameDir,
+      loop = '1',
+      outFile = 'out.webp',
+      frameOpt = '+34+0+0+1+b',
+      bgColor = '255,255,255,255',
+    }) => {
+      const frames = readDir(frameDir);
+
+      if (!frames) return console.log('请输入正确的文件夹位置');
+
+      let command = `webpmux `;
+
+      frames.forEach((frameFile, i) => {
+        command += `-frame ${frameDir}/${frameFile} ${frameOpt} `;
+      });
+
+      command += `-loop ${loop} -bgcolor ${bgColor} `;
+      command += `-o ${outFile}`;
+
+      if (await execLongCMD(command)) {
+        success();
+        console.log(`output: ${outFile}`);
+      }
+    },
+  )
+
   .action<{ file: string }>(
     '-i --info [file]',
     '统计duration',
@@ -133,6 +147,11 @@ cli
   .action(
     'awebp -e ./test/test.webp frames',
     '// 提取所有帧出来到frames文件夹',
+    'Examples',
+  )
+  .action(
+    'awebp -c frames out.webp +34+0+0+1+b 1 255,255,255,255',
+    '// 合成',
     'Examples',
   )
   .action(

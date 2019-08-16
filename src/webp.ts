@@ -1,5 +1,5 @@
-import * as path from 'path';
 import * as fs from 'fs';
+import { EOL } from 'os';
 import { exec, concurrent } from './utils';
 
 interface Frame {
@@ -37,7 +37,7 @@ export class Webp {
   async init() {
     const out = await exec(`webpmux -info ${this.filePath}`);
     // console.log('TCL: out', out);
-    const lines = out.split('\r').map((i: string) => i.trim());
+    const lines = out.split(EOL);
     // console.log('TCL: lines', lines);
     const valueOfLine = (lineNum: number) =>
       lines[lineNum].split(':')[1].trim();
@@ -119,10 +119,11 @@ export class Webp {
       : frame.dispose)
         ? '1'
         : '0';
-      if (i !== frames.length)
-        command += `-frame ${frameDir}/frame-${i}.webp +${frame.duration}+${
-          frame.xOffset
-        }+${frame.yOffset}+${disposeOpt}${blendOpt} `;
+
+      // 这里导致复用性降低, 有耦合
+      command += `-frame ${frameDir}/frame-${i}.webp +${frame.duration}+${
+        frame.xOffset
+      }+${frame.yOffset}+${disposeOpt}${blendOpt} `;
     });
 
     command += `-loop ${loopCount} -bgcolor ${backgroundColorARGB.join(',')} `;
