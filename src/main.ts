@@ -132,6 +132,7 @@ cli
         (acc, frame) => acc + ~~frame.duration,
         0,
       );
+      console.log('canvasSize:', webp.canvasSize);
       console.log(`duration: ${duration}ms`);
     },
   )

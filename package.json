@@ -38,6 +38,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
+    "jimp": "^0.8.5",
     "rimraf": "^2.6.3"
   }
 }

@@ -1,3 +1,5 @@
+import * as Jimp from 'jimp';
+// import Jimp from 'jimp';
 import * as fs from 'fs';
 import { EOL } from 'os';
 import { exec, concurrent, defVal } from './utils';
@@ -56,7 +58,7 @@ export class Webp {
 
       // prettier-ignore
       return {
-        no: parseInt(no, 10), width, height, alpha, xOffset, yOffset, duration, dispose: dispose === 'yes', blend: blend === 'yes', imageSize, compression,
+        no: parseInt(no, 10), width, height, alpha, xOffset, yOffset, duration, dispose: dispose === 'background', blend: blend === 'yes', imageSize, compression,
       };
     });
     frames.length = numberOfFrames;
@@ -94,6 +96,22 @@ export class Webp {
       ),
     );
 
+    // 单独处理第一帧还原canvas size
+    if (frames[0]) {
+      await exec(`dwebp ${dir}/frame-0.webp -o ${dir}/frame-0.png`, true);
+      // @ts-ignore
+      const origin = await Jimp.read(`${dir}/frame-0.png`);
+      const [width, height] = this.canvasSize.split('x').map(i => ~~i.trim());
+      const { xOffset, yOffset } = frames[0];
+      // @ts-ignore
+      const img = new Jimp(width, height, 0x0);
+      img.composite(origin, parseInt(xOffset, 10), parseInt(yOffset, 10));
+      img.write(`${dir}/frame-0.png`);
+      await exec(`cwebp ${dir}/frame-0.png -o ${dir}/frame-0.webp`, true);
+      frames[0].xOffset = '0';
+      frames[0].yOffset = '0';
+    }
+
     return dir;
   }
 
@@ -117,7 +135,6 @@ export class Webp {
     let command = `webpmux `;
     const loopOpt = defVal(loop, loopCount);
     const bgColorOpt = defVal(bgColor, backgroundColorARGB.join(','));
-
     frames.forEach((frame, i) => {
       blendOpt = (blend !== undefined ? blend : frame.blend) ? '+b' : '-b';
       disposeOpt = (dispose !== undefined
@@ -129,9 +146,7 @@ export class Webp {
         duration === undefined ? parseInt(frame.duration, 10) : duration;
 
       // 这里导致复用性降低, 有耦合
-      command += `-frame ${frameDir}/frame-${i}.webp +${durationOpt}+${
-        frame.xOffset
-      }+${frame.yOffset}+${disposeOpt}${blendOpt} `;
+      command += `-frame ${frameDir}/frame-${i}.webp +${durationOpt}+${frame.xOffset}+${frame.yOffset}+${disposeOpt}${blendOpt} `;
     });
 
     command += `-loop ${loopOpt} -bgcolor ${bgColorOpt} `;
