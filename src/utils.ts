@@ -58,6 +58,27 @@ export function readDir(dir: string) {
   }
 }
 
+export function powershell(file: string) {
+  return new Promise((resolve, reject) => {
+    const child = shell.spawn('powershell.exe', ['-File', file]);
+    let out = '';
+    child.stdout.on('data', function(data) {
+      // console.log('Powershell Data: ' + data);
+    });
+    child.stderr.on('data', function(data) {
+      out += data;
+      // console.log('Powershell Errors: ' + data);
+      // reject(data);
+    });
+    child.on('exit', function(code) {
+      console.log('Powershell Script out', out);
+      console.log('Powershell Script finished Code:', code);
+      resolve();
+    });
+    child.stdin.end(); //end input
+  });
+}
+
 export async function execLongCMD(cmd: string) {
   if (isWindows) {
     // windows cmd 有命令最长有8k char 限制, 所以使用powershell来执行命令
@@ -65,7 +86,8 @@ export async function execLongCMD(cmd: string) {
     fs.writeFileSync(ps1, cmd);
 
     try {
-      await exec(`powershell -f ${ps1}`);
+      // await exec(`powershell -File ${ps1}`);
+      await powershell(ps1);
       return true;
     } catch (e) {
       console.log(e);

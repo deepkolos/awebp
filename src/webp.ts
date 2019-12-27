@@ -167,7 +167,7 @@ export class Webp {
       command += `-frame ${frameDir}/frame-${i}.webp +${durationOpt}+${frame.xOffset}+${frame.yOffset}+${disposeOpt}${blendOpt} `;
     });
 
-    command += `-loop ${loopOpt} -bgcolor ${bgColorOpt} `;
+    command += `-loop ${loopOpt} -bgcolor "${bgColorOpt}" `;
     command += `-o ${outFile}`;
 
     return command;
