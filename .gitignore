@@ -64,3 +64,4 @@ lib
 frames
 *.webp
 webp*/
+Thumbs.db:encryptable

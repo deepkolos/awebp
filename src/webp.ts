@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { EOL } from 'os';
 import { exec, concurrent, defVal } from './utils';
 
-interface Frame {
+export interface Frame {
   no: number;
   width: string;
   height: string;
@@ -81,7 +81,7 @@ export class Webp {
     this.backgroundColorARGB = backgroundColorARGB;
   }
 
-  async extractFramesData(outDir?: string) {
+  async extractFramesData(outDir?: string, fillFrame?: boolean) {
     const { filePath, frames } = this;
     const dir = outDir || fs.mkdtempSync('webp');
 
@@ -96,23 +96,41 @@ export class Webp {
       ),
     );
 
-    // 单独处理第一帧还原canvas size
-    if (frames[0]) {
-      await exec(`dwebp ${dir}/frame-0.webp -o ${dir}/frame-0.png`, true);
-      // @ts-ignore
-      const origin = await Jimp.read(`${dir}/frame-0.png`);
-      const [width, height] = this.canvasSize.split('x').map(i => ~~i.trim());
-      const { xOffset, yOffset } = frames[0];
-      // @ts-ignore
-      const img = new Jimp(width, height, 0x0);
-      img.composite(origin, parseInt(xOffset, 10), parseInt(yOffset, 10));
-      img.write(`${dir}/frame-0.png`);
-      await exec(`cwebp ${dir}/frame-0.png -o ${dir}/frame-0.webp`, true);
-      frames[0].xOffset = '0';
-      frames[0].yOffset = '0';
+    if (fillFrame) {
+      await concurrent(
+        frames.map((frame, i) => () => this.fillFrame(dir, frame, i)),
+      );
+    } else if (frames[0]) {
+      // 单独处理第一帧还原canvas size
+      await this.fillFrame(dir, frames[0], 0);
     }
 
     return dir;
+  }
+
+  async fillFrame(dir: string, frame: Frame, i: number) {
+    await exec(`dwebp ${dir}/frame-${i}.webp -o ${dir}/frame-${i}.png`, true);
+    // @ts-ignore
+    const origin = await Jimp.read(`${dir}/frame-${i}.png`);
+    const [width, height] = this.canvasSize.split('x').map(i => ~~i.trim());
+    const { xOffset, yOffset } = frame;
+    // @ts-ignore
+    const img = new Jimp(width, height, 0x0);
+    img.composite(origin, parseInt(xOffset, 10), parseInt(yOffset, 10));
+    await img.writeAsync(`${dir}/frame-${i}.png`);
+    try {
+      await exec(
+        `cwebp ${dir}/frame-${i}.png -o ${dir}/frame-${i}.webp`,
+        false,
+      );
+    } catch (error) {
+      if (error.toString().indexOf('Saving file') === -1) {
+        console.log('TCL: Webp -> fillFrame -> error', error);
+        throw error;
+      }
+    }
+    frame.xOffset = '0';
+    frame.yOffset = '0';
   }
 
   createCommand(

@@ -151,6 +151,7 @@ export default class CLI {
   }
 
   public async run(args: string[]) {
+    const startT = Date.now();
     const action = this.getTriggerAction(args);
 
     if (action && action.callback) {
@@ -158,6 +159,7 @@ export default class CLI {
 
       // options 提取出来
       await action.callback({ ...options });
+      console.log(`耗时: ${Date.now() - startT}ms`);
     } else {
       console.log('未知命令: ', args.join(' '));
     }

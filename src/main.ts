@@ -72,14 +72,14 @@ cli
     },
   )
 
-  .action<{ file: string; outDir: string }>(
-    '-e --extract-frame [file] [outDir]',
+  .action<{ file: string; outDir: string; fillFrame: string }>(
+    '-e --extract-frame [file] [outDir] [fillFrame]',
     '提取所有帧出来',
     '',
-    async ({ file, outDir = 'frames' }) => {
+    async ({ file, outDir = 'frames', fillFrame = 'false' }) => {
       const webp = new Webp(file);
       await webp.init();
-      await webp.extractFramesData(outDir);
+      await webp.extractFramesData(outDir, fillFrame === 'true');
       success();
     },
   )
@@ -134,6 +134,9 @@ cli
       );
       console.log('canvasSize:', webp.canvasSize);
       console.log(`duration: ${duration}ms`);
+      console.log(`平均帧间隔: ${duration / webp.frames.length}ms`);
+      console.log(`首帧间隔: ${webp.frames[0].duration}ms`);
+      console.log('fps:', 1000 / (duration / webp.frames.length));
     },
   )
 
