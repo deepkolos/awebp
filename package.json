@@ -1,6 +1,6 @@
 {
   "name": "awebp",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "awebp 修改 animated webp 的工具比如修复ffmpeg转出webp层叠展示问题和压缩",
   "main": "lib/index.js",
   "bin": {
